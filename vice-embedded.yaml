@@ -1,0 +1,55 @@
+{{- $image := or .image "vice-embedded.img" -}}
+
+architecture: amd64
+
+actions:
+  - action: debootstrap
+    suite: "buster"
+    components:
+      - main
+      - non-free
+    mirror: https://deb.debian.org/debian
+    variant: minbase
+
+  - action: apt
+    packages: [ sudo, openssh-server, adduser, systemd-sysv, firmware-linux ]
+
+  - action: run
+    chroot: true
+    command: echo v128 > /etc/hostname
+
+  - action: run
+    chroot: true
+    script: scripts/setup-user.sh
+
+  - action: image-partition
+    imagename: {{ $image }}
+    imagesize: 1GB
+    partitiontype: msdos
+    mountpoints:
+      - mountpoint: /
+        partition: root
+      - mountpoint: /boot
+        partition: uefi
+        options: [ x-systemd.automount ]
+    partitions:
+      - name: uefi
+        fs: fat32
+        start: 0%
+        end: 64MB
+        flags: [ boot ]
+      - name: root
+        fs: ext4
+        start: 64MB
+        end: 100%
+
+  - action: filesystem-deploy
+    description: Deploy the filesystem into an image
+
+  - action: run
+    postprocess: true
+    command: bmaptool create {{ $image }} > {{ $image }}.bmap
+
+  - action: run
+    postprocess: true
+    command: bzip2 -f {{ $image }}
