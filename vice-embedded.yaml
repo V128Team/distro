@@ -1,10 +1,11 @@
 {{- $image := or .image "vice-embedded.img" -}}
+{{- $outdir := or .outdir "" -}}
 
 architecture: amd64
 
 actions:
   - action: debootstrap
-    suite: "buster"
+    suite: "testing"
     components:
       - main
       - non-free
@@ -21,6 +22,24 @@ actions:
   - action: run
     chroot: true
     script: scripts/setup-user.sh
+
+  - action: overlay
+    source: vice-embedded.list
+    destination: /etc/apt/sources.list.d/vice-embedded.list
+
+  - action: run
+    chroot: true
+    command: mkdir -p /var/cache/vice-embedded/packages
+
+  - action: overlay
+    source: apt
+    destination: /var/cache/vice-embedded/packages/
+
+  - action: apt
+    recommends: false
+    unauthenticated: true
+    packages:
+      - vice
 
   - action: image-partition
     imagename: {{ $image }}
