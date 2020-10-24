@@ -8,12 +8,24 @@ actions:
     suite: "testing"
     components:
       - main
+      - contrib
       - non-free
     mirror: https://deb.debian.org/debian
     variant: minbase
 
   - action: apt
-    packages: [ sudo, openssh-server, adduser, systemd-sysv, firmware-linux ]
+    packages:
+      - adduser
+      - firmware-linux
+      - grub2
+      - linux-base
+      - linux-image-generic
+      - openssh-server
+      - pulseaudio
+      - sudo
+      - systemd-sysv
+      - udev
+      - vim
 
   - action: run
     chroot: true
@@ -22,6 +34,10 @@ actions:
   - action: run
     chroot: true
     script: scripts/setup-user.sh
+
+  - action: run
+    chroot: true
+    command: systemctl enable systemd-networkd systemd-resolved
 
   - action: overlay
     source: vice-embedded.list
@@ -43,24 +59,34 @@ actions:
 
   - action: image-partition
     imagename: {{ $image }}
-    imagesize: 1GB
-    partitiontype: msdos
+    imagesize: 2GB
+    partitiontype: gpt
     mountpoints:
       - mountpoint: /
         partition: root
-      - mountpoint: /boot
-        partition: uefi
-        options: [ x-systemd.automount ]
-    partitions:
-      - name: uefi
-        fs: fat32
-        start: 0%
-        end: 64MB
+      - mountpoint: /boot/efi
+        partition: efi
         flags: [ boot ]
+    partitions:
+      - name: efi
+        fs: vfat
+        start: 0%
+        end: 256MB
+        options: [ x-systemd.automount ]
       - name: root
         fs: ext4
-        start: 64MB
+        start: 256MB
         end: 100%
 
   - action: filesystem-deploy
     description: Deploy the filesystem into an image
+
+  - action: apt
+    packages:
+      - grub-efi
+      - initramfs-tools
+      - linux-image-amd64
+
+  - action: run
+    chroot: true
+    script: scripts/setup-grub.sh
