@@ -21,15 +21,17 @@ actions:
       - linux-base
       - linux-image-generic
       - openssh-server
+      - parted
+      - pciutils
       - pulseaudio
       - sudo
       - systemd-sysv
       - udev
+      - usbutils
       - vim
 
-  - action: run
-    chroot: true
-    command: echo v128 > /etc/hostname
+  - action: overlay
+    source: overlays
 
   - action: run
     chroot: true
@@ -38,10 +40,6 @@ actions:
   - action: run
     chroot: true
     command: systemctl enable systemd-networkd systemd-resolved
-
-  - action: overlay
-    source: vice-embedded.list
-    destination: /etc/apt/sources.list.d/vice-embedded.list
 
   - action: run
     chroot: true
