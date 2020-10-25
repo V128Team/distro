@@ -18,11 +18,15 @@ actions:
       - adduser
       - firmware-linux
       - grub2
+      - kmod
+      - less
       - linux-base
       - linux-image-generic
       - openssh-server
       - parted
       - pciutils
+      - plymouth
+      - plymouth-themes
       - pulseaudio
       - sudo
       - systemd-sysv
@@ -54,6 +58,11 @@ actions:
     unauthenticated: true
     packages:
       - vice
+      - plymouth-v128-theme
+
+  - action: run
+    chroot: true
+    command: plymouth-set-default-theme -R v128; update-initramfs -u
 
   - action: image-partition
     imagename: {{ $image }}
