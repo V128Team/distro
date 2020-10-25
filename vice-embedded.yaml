@@ -18,6 +18,7 @@ actions:
       - adduser
       - firmware-linux
       - grub2
+      - intel-microcode
       - kmod
       - less
       - linux-base
@@ -60,10 +61,6 @@ actions:
       - vice
       - plymouth-v128-theme
 
-  - action: run
-    chroot: true
-    command: plymouth-set-default-theme -R v128; update-initramfs -u
-
   - action: image-partition
     imagename: {{ $image }}
     imagesize: 2GB
@@ -76,24 +73,30 @@ actions:
         flags: [ boot ]
     partitions:
       - name: efi
+        partlabel: efi
         fs: vfat
         start: 0%
         end: 256MB
         options: [ x-systemd.automount ]
       - name: root
+        partlabel: root
         fs: ext4
         start: 256MB
         end: 100%
 
   - action: filesystem-deploy
     description: Deploy the filesystem into an image
-
-  - action: apt
-    packages:
-      - grub-efi
-      - initramfs-tools
-      - linux-image-amd64
+    setup-fstab: true
+    setup-kernel-cmdline: false
 
   - action: run
     chroot: true
-    script: scripts/setup-grub.sh
+    command: plymouth-set-default-theme -R v128
+
+  - action: run
+    chroot: true
+    script: scripts/setup-boot.sh
+
+  # - action: run
+  #   chroot: true
+  #   script: scripts/setup-grub.sh
