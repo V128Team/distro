@@ -60,7 +60,8 @@ actions:
     packages:
       - vice
       - plymouth-v128-theme
-      - v128-shell
+      - libwld
+      - libswc
 
   - action: image-partition
     imagename: {{ $image }}
