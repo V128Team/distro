@@ -18,9 +18,11 @@ actions:
       - adduser
       - firmware-linux
       - grub2
+      - cool-retro-term
       - intel-microcode
       - kmod
       - less
+      - libpam-systemd
       - linux-base
       - linux-image-generic
       - openssh-server
@@ -40,10 +42,6 @@ actions:
 
   - action: run
     chroot: true
-    script: scripts/setup-user.sh
-
-  - action: run
-    chroot: true
     command: systemctl enable systemd-networkd systemd-resolved
 
   - action: run
@@ -60,8 +58,6 @@ actions:
     packages:
       - vice
       - plymouth-v128-theme
-      - libwld
-      - libswc
       - v128-shell
 
   - action: image-partition
@@ -102,4 +98,4 @@ actions:
 
   - action: run
     chroot: true
-    script: scripts/setup-services.sh
+    script: scripts/setup-user.sh
