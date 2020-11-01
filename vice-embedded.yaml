@@ -16,13 +16,15 @@ actions:
   - action: apt
     packages:
       - adduser
+      - cool-retro-term
       - firmware-linux
       - grub2
-      - cool-retro-term
+      - gnome-terminal
       - intel-microcode
       - kmod
       - less
       - libpam-systemd
+      - libqt5waylandclient5
       - linux-base
       - linux-image-generic
       - openssh-server
@@ -31,6 +33,7 @@ actions:
       - plymouth
       - plymouth-themes
       - pulseaudio
+      - qtwayland5
       - sudo
       - systemd-sysv
       - udev
