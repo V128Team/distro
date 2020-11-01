@@ -1,0 +1,7 @@
+/* Allow users with inactive sessions to switch the console */
+polkit.addRule(function(action, subject) {
+    if (action.id == "org.freedesktop.login1.chvt" &&
+        subject.local && subject.session) {
+        return polkit.Result.YES;
+    }
+});
