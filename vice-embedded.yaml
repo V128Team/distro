@@ -5,7 +5,7 @@ architecture: amd64
 
 actions:
   - action: debootstrap
-    suite: "testing"
+    suite: "bullseye"
     components:
       - main
       - contrib
@@ -18,6 +18,7 @@ actions:
       - adduser
       - cool-retro-term
       - firmware-linux
+      - firmware-misc-nonfree
       - grub2
       - gnome-terminal
       - intel-microcode
