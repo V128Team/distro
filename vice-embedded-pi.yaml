@@ -24,6 +24,7 @@ actions:
     packages:
       - adduser
       - cool-retro-term
+      - fbset
       - firmware-linux
       - firmware-misc-nonfree
       - gnome-terminal
@@ -78,6 +79,7 @@ actions:
 #      - vice
       - plymouth-v128-theme
 #      - v128-shell
+      - pi4-firmware
 
   - action: run
     chroot: true
@@ -86,6 +88,10 @@ actions:
   - action: run
     chroot: true
     script: scripts/setup-user.sh
+
+  - action: run
+    chroot: true
+    command: cp /boot/initrd.img-* /boot/firmware/initrd.img
 
   - action: image-partition
     imagename: {{ $image }}
@@ -101,10 +107,10 @@ actions:
       - name: firmware
         fs: fat32
         start: 0%
-        end: 64MB
+        end: 128MB
       - name: root
         fs: ext4
-        start: 64MB
+        start: 128MB
         end: 100%
         flags: [ boot ]
 
