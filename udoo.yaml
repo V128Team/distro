@@ -1,16 +1,9 @@
-{{- $architecture := or .architecture "armhf" -}}
 {{- $image := or .image "vice-embedded.img" -}}
 {{- $outdir := or .outdir "" -}}
-{{- $firmware_version := or .firmware_version "1.20201022" }}
 
-architecture: {{ $architecture }}
+architecture: amd64
 
 actions:
-  - action: download
-    url: https://github.com/raspberrypi/firmware/archive/{{ $firmware_version }}.tar.gz
-    unpack: true
-    name: firmware
-
   - action: debootstrap
     suite: "bullseye"
     components:
@@ -24,17 +17,17 @@ actions:
     packages:
       - adduser
       - cool-retro-term
-      - fbset
       - firmware-linux
       - firmware-misc-nonfree
+      - grub2
       - gnome-terminal
+      - intel-microcode
       - kmod
       - less
       - libpam-systemd
       - libqt5waylandclient5
       - linux-base
-      - locales
-      - network-manager
+      - linux-image-generic
       - openssh-server
       - parted
       - pciutils
@@ -42,28 +35,18 @@ actions:
       - plymouth-themes
       - pulseaudio
       - qtwayland5
-      - rpi-eeprom
       - sudo
       - systemd-sysv
       - udev
       - usbutils
       - vim
 
-  - action: run
-    chroot: true
-    command: systemctl enable NetworkManager
-
   - action: overlay
-    origin: firmware
-    source: firmware-{{ $firmware_version }}/boot
-    destination: /boot/firmware
-
-  - action: overlay
-    source: overlay-pi
+    source: overlays
 
   - action: run
     chroot: true
-    command: locale-gen
+    command: systemctl enable systemd-networkd systemd-resolved
 
   - action: run
     chroot: true
@@ -77,10 +60,37 @@ actions:
     recommends: false
     unauthenticated: true
     packages:
-#      - vice
+      - vice
       - plymouth-v128-theme
-#      - v128-shell
-      - pi4-firmware
+      - v128-shell
+
+  - action: image-partition
+    imagename: {{ $image }}
+    imagesize: 3GB
+    partitiontype: gpt
+    mountpoints:
+      - mountpoint: /
+        partition: root
+      - mountpoint: /boot/efi
+        partition: efi
+        flags: [ boot ]
+    partitions:
+      - name: efi
+        partlabel: efi
+        fs: vfat
+        start: 0%
+        end: 1GB
+        options: [ x-systemd.automount ]
+      - name: root
+        partlabel: root
+        fs: ext4
+        start: 1GB
+        end: 100%
+
+  - action: filesystem-deploy
+    description: Deploy the filesystem into an image
+    setup-fstab: true
+    setup-kernel-cmdline: false
 
   - action: run
     chroot: true
@@ -88,32 +98,8 @@ actions:
 
   - action: run
     chroot: true
-    script: scripts/setup-user.sh
+    script: scripts/setup-boot.sh
 
   - action: run
     chroot: true
-    command: cp /boot/initrd.img-* /boot/firmware/initrd.img
-
-  - action: image-partition
-    imagename: {{ $image }}
-    imagesize: 2GB
-    partitiontype: msdos
-    mountpoints:
-      - mountpoint: /
-        partition: root
-      - mountpoint: /boot/firmware
-        partition: firmware
-        options: [ x-systemd.automount ]
-    partitions:
-      - name: firmware
-        fs: fat32
-        start: 0%
-        end: 128MB
-      - name: root
-        fs: ext4
-        start: 128MB
-        end: 100%
-        flags: [ boot ]
-
-  - action: filesystem-deploy
-    description: Deploy the filesystem into an image
+    script: scripts/setup-user.sh
