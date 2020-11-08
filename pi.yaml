@@ -58,7 +58,7 @@ actions:
     destination: /boot/firmware
 
   - action: overlay
-    source: overlay-pi
+    source: overlays/pi
 
   - action: run
     chroot: true

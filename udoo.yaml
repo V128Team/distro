@@ -42,7 +42,7 @@ actions:
       - vim
 
   - action: overlay
-    source: overlays
+    source: overlays/udoo
 
   - action: run
     chroot: true
