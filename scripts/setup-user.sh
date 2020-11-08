@@ -26,3 +26,8 @@ for grp in "${USER_GROUPS[@]}"; do
 done
 
 passwd -d user
+
+# Setup homedir
+cp -r /user /home/
+chown -R user:user /home/user
+rm -rf /user
