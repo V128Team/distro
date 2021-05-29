@@ -17,17 +17,21 @@ actions:
     packages:
       - adduser
       - cool-retro-term
+      - ethtool
       - firmware-linux
       - firmware-misc-nonfree
+      - gdb
       - grub2
       - gnome-terminal
       - intel-microcode
+      - iproute2
       - kmod
       - less
       - libpam-systemd
       - libqt5waylandclient5
       - linux-base
       - linux-image-generic
+      - net-tools
       - openssh-server
       - parted
       - pciutils
@@ -37,8 +41,10 @@ actions:
       - qtwayland5
       - sudo
       - systemd-sysv
+      - strace
       - udev
       - usbutils
+      - valgrind
       - vim
 
   - action: overlay
@@ -46,7 +52,7 @@ actions:
 
   - action: run
     chroot: true
-    command: systemctl enable systemd-networkd systemd-resolved
+    command: systemctl enable systemd-networkd systemd-resolved ssh
 
   - action: run
     chroot: true
@@ -60,13 +66,14 @@ actions:
     recommends: false
     unauthenticated: true
     packages:
-      - vice
+      - mdt-services
       - plymouth-v128-theme
       - v128-shell
+      - vice
 
   - action: image-partition
     imagename: {{ $image }}
-    imagesize: 3GB
+    imagesize: 4GB
     partitiontype: gpt
     mountpoints:
       - mountpoint: /
