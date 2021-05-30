@@ -29,6 +29,7 @@ actions:
       - firmware-linux
       - firmware-misc-nonfree
       - gnome-terminal
+      - iproute2
       - kmod
       - less
       - libpam-systemd
