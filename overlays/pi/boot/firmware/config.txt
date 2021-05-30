@@ -2,4 +2,6 @@ arm_64bit=0
 enable_uart=0
 disable_splash=1
 dtoverlay=dwc2,dr_mode=host
+dtoverlay=vc4-fkms-v3d
+max_framebuffers=2
 initramfs initrd.img

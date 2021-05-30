@@ -23,6 +23,7 @@ actions:
   - action: apt
     packages:
       - adduser
+      - avahi-daemon
       - cool-retro-term
       - fbset
       - firmware-linux
@@ -76,11 +77,12 @@ actions:
     recommends: false
     unauthenticated: true
     packages:
+      - mdt-services
       - plymouth-v128-theme
       - pi4-firmware
       - rpi-eeprom
-#      - v128-shell
-#      - vice
+      - v128-shell
+      - vice
 
   - action: run
     chroot: true
