@@ -14,6 +14,7 @@ USER_GROUPS=(
     sudo
     users
     video
+    sudo
 )
 
 adduser --gecos user \
@@ -25,9 +26,4 @@ for grp in "${USER_GROUPS[@]}"; do
     adduser user "${grp}"
 done
 
-passwd -d user
-
-# Setup homedir
-cp -r /user /home/
-chown -R user:user /home/user
-rm -rf /user
+echo 'user:user' |chpasswd
