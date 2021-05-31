@@ -12,7 +12,7 @@ actions:
     name: firmware
 
   - action: debootstrap
-    suite: "bullseye"
+    suite: "testing"
     components:
       - main
       - contrib
@@ -23,6 +23,7 @@ actions:
   - action: apt
     packages:
       - adduser
+      - alsa-utils
       - avahi-daemon
       - cool-retro-term
       - fbset
